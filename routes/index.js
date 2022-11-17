@@ -2,10 +2,8 @@ const express = require('express');
 const router = express.Router();
 const user = require('../models').User;
 const courses = require('../models').Courses;
-const { authenticateUser } = require("../middleware/auth-user");
+// const { authenticateUser } = require("../middleware/auth-user");
 
-const { users } = require('./seed/data.json');
-const { course } = require('./seed/data.json');
 
 function asyncHandler(cb){
     return async(req, res, next) => {
@@ -21,13 +19,13 @@ function asyncHandler(cb){
 //USER ROUTES
  //GET route that will return all properties and values for the currently authenticated User along with 200 status code
 
- router.get("/api/user", authenticateUser,asyncHandler(async (req, res) => {
+ router.get("/users",asyncHandler(async (req, res) => {
     const user = req.currentUser;
     res.status(200).json(user);
  } ))
 
 //POST route that will create a new user and retun a 201 HTTP status code
-router.post("/api/user", authenticateUser, asyncHandler(async (req, res, err) => {
+router.post("/users", asyncHandler(async (req, res, err) => {
   let user;
   try {
     user = await user.create(req.body);
@@ -68,28 +66,29 @@ router.post("/api/user", authenticateUser, asyncHandler(async (req, res, err) =>
   });
 
   //POST route
-  // router.post("/courses")
+  router.post("/courses")
 
 
-  // router.put("/courses/:id")
+  router.put("/courses/:id", asyncHandler(asynx ()))
 
 
-  // router.delete("/courses/:id", asyncHandler (async (req, res) => {
-  //   let courseId = req.params.id
-  //   try {
-  //     let course = await Courses.findOne({ where: { id: courseId}})
-  //     if (course) {
-  //       await course.destroy();
-  //     } else {
-  //       next(createError(404, "Could not find any courses with this id"))
-  //     }
-  //   } catch (error) {
-  //     if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraint') {
-  //       const errors = error.errors.map(err => err.message);
-  //       res.status(400).json({ errors });
-  //     } else {
-  //       throw error;
-  //     }
-  //   }
-  // }));
+  router.delete("/courses/:id", asyncHandler (async (req, res) => {
+    let courseId = req.params.id
+    try {
+      let course = await Courses.findOne({ where: { id: courseId}})
+      if (course) {
+        await course.destroy();
+      } else {
+        next(createError(404, "Could not find any courses with this id"))
+      }
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraint') {
+        const errors = error.errors.map(err => err.message);
+        res.status(400).json({ errors });
+      } else {
+        throw error;
+      }
+    }
+  }));
 
+module.exports = router;

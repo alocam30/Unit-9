@@ -1,5 +1,4 @@
 'use strict';
-
 //users from data.json
 const { users } = require('./seed/data.json');
 
@@ -19,8 +18,8 @@ const Sequelize = require('./models/index.js').sequelize;
   }
 })();
 
-
-
+//import router file
+const indexRouter = require('./routes/index');
 
 // load modules
 const express = require('express');
@@ -41,6 +40,9 @@ app.get('/', (req, res) => {
     message: 'Welcome to the REST API project!',
   });
 });
+
+
+app.use('/api', indexRouter);
 
 // send 404 if no other route matched
 app.use((req, res) => {
@@ -70,3 +72,4 @@ const server = app.listen(app.get('port'), () => {
 });
 
 
+module.exports = app;
