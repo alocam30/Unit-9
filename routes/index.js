@@ -43,11 +43,11 @@ router.post("/users", asyncHandler(async (req, res, err) => {
         throw error;
       }
   }
-  if (!user.password) {
-    errors.push('Please provide a value for "password"');
-  } else {
-    user.password = bcrypt.hashSync(user.password, 10);
-  }
+  // if (!user.password) {
+  //   errors.push('Please provide a value for "password"');
+  // } else {
+  //   user.password = bcrypt.hashSync(user.password, 10);
+  // }
 
 }));
 

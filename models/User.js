@@ -1,5 +1,6 @@
 'use strict';
 const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize) => {
   class User extends Sequelize.Model {}
@@ -11,9 +12,9 @@ module.exports = (sequelize) => {
         notNull: {
           msg: 'A first name is required'
         },
-        // notEmpty: {
-        //   msg: 'Please proivde a first name'
-        // }
+        notEmpty: {
+          msg: 'Please proivde a first name'
+        }
       }
     },
     lastName: {
@@ -23,9 +24,9 @@ module.exports = (sequelize) => {
         notNull: {
           msg: 'A last name is required'
         },
-        // notEmpty: {
-        //   msg: 'Please proivde a last name'
-        // }
+        notEmpty: {
+          msg: 'Please proivde a last name'
+        }
       }
     },
     emailAddress: {
@@ -49,10 +50,13 @@ module.exports = (sequelize) => {
           },
           notEmpty: {
             msg: 'Please provide a valid password'
-          }
+          },
+          set(val) {
+            const hashedPassword = bcrypt.hashSync(val, 10);
+            this.setDataValue('password', hashedPassword);
         }
     },
-  }, { sequelize });
+ } }, { sequelize });
 
   User.associate = (models) => {
     User.hasMany(models.Courses);

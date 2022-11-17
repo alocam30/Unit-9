@@ -8,20 +8,32 @@ module.exports = (sequelize) => {
     title: {
       type: Sequelize.STRING,
       allowNull: false,
-    },
+      notNull: {
+        msg: "Please provide a value for Title"
+       },
+    notEmpty: {
+        msg: "Please provide a title"
+        },
+  },
     description: {
       type: Sequelize.TEXT,
       allowNull: false,
+      notNull: {
+        msg: "Please provide a value for Description"
+    },
+    notEmpty: {
+        msg: "Please provide a description"
+    },
     },
     estimatedTime: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
+    },
     materialsNeeded: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-  }, { sequelize });
+    } },
+    { sequelize });
 
   Courses.associate = (models) => {
     Courses.belongsTo(models.User, {
