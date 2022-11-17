@@ -3,8 +3,9 @@ const Courses = require('../models/Courses');
 const router = express.Router();
 const user = require('../models').User;
 const courses = require('../models').Courses;
+const auth = require('basic-auth');
 const bcrypt = require('bcrypt');
-// const { authenticateUser } = require("../middleware/auth-user");
+const { authenticateUser } = require('./middleware/auth-user');
 
 
 function asyncHandler(cb){
@@ -17,11 +18,40 @@ function asyncHandler(cb){
     }
   };
   
+  exports.authenticateUser = async (req, res, next) => {
+   let message;
+    const credentials = auth(req);
+  
+    if (credentials) {
+      const user = await User.findOne({ where: { emailAdress: credentials.name} });
+      if (user) {
+        const authenticated = bcrypt
+        .compareSync(credentials.pass, user.password);
+       if (authenticated) {
+        console.log(`Authentication successful for username: ${user.emailAdress}`)
+        req.currentUser = user;
+      } else {
+        message =`Authentication failed for ${user.emailAdress}`
+      }
+    } else {
+      message = `User not found for email: ${credentials.name}`
+    } 
+     } else {
+      message = "Authorization header not found"
+    }
+
+    if (message) {
+      console.warn(message);
+      res.status(401).json({  message: 'Access Denied' })
+    } else {
+    next()
+    };
+  };
 
 //USER ROUTES
  //GET route that will return all properties and values for the currently authenticated User along with 200 status code
 
- router.get("/users",asyncHandler(async (req, res) => {
+ router.get("/users",authenticateUser, asyncHandler(async (req, res) => {
     const user = req.currentUser;
     res.status(200).json(user);
  } ))
@@ -43,12 +73,6 @@ router.post("/users", asyncHandler(async (req, res, err) => {
         throw error;
       }
   }
-  // if (!user.password) {
-  //   errors.push('Please provide a value for "password"');
-  // } else {
-  //   user.password = bcrypt.hashSync(user.password, 10);
-  // }
-
 }));
 
   //COURSES ROUTES
@@ -80,8 +104,8 @@ router.post("/users", asyncHandler(async (req, res, err) => {
   })
   );
 
-  //POST route
-  router.post("/courses"), asyncHandler(async (req, res) => {
+  //POST that will create a new course 
+  router.post("/courses"),authenticateUser,asyncHandler(async (req, res) => {
     try {
       if (req.currentUser) {
         const course = await Courses.create(req.body);
@@ -104,7 +128,7 @@ router.post("/users", asyncHandler(async (req, res, err) => {
 
 
 //PUT route that will update corressponding course and return a 204 HTTP status code 
-  router.put("/courses/:id", asyncHandler(async (req, res) => {
+  router.put("/courses/:id", authenticateUser, asyncHandler(async (req, res) => {
     try {
       let course = await Courses.findByPk(req.params.id);
       if (course) {
@@ -132,7 +156,7 @@ router.post("/users", asyncHandler(async (req, res, err) => {
 
 
 //DELETE route
-  router.delete("/courses/:id", asyncHandler (async (req, res) => {
+  router.delete("/courses/:id", authenticateUser , asyncHandler (async (req, res) => {
     let courseId = req.params.id
     try {
       let course = await Courses.findOne({ where: { id: courseId}})
