@@ -1,5 +1,27 @@
 'use strict';
 
+//users from data.json
+const { users } = require('./seed/data.json');
+
+//import sequelize
+const Sequelize = require('./models/index.js').sequelize;
+
+(async () => {
+  //sync the model with the database
+  await Sequelize.sync({
+  });
+  try {
+    //used authenticate() method to connect asynchronously to the database
+    await Sequelize.authenticate();
+    console.log('Connection to the database successful!');
+  } catch (error) {
+    console.error('Error connection to the database: ', error);
+  }
+})();
+
+
+
+
 // load modules
 const express = require('express');
 const morgan = require('morgan');
@@ -46,3 +68,5 @@ app.set('port', process.env.PORT || 5000);
 const server = app.listen(app.get('port'), () => {
   console.log(`Express server is listening on port ${server.address().port}`);
 });
+
+
