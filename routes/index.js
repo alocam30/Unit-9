@@ -1,7 +1,7 @@
 const express = require('express');
-const Courses = require('../models/Courses');
+const Courses = require('../models').Courses;
 const router = express.Router();
-const { User } = require('../models')
+const { User } = require('../models').User;
 const { authenticateUser } = require('../auth-user');
 
 
@@ -29,7 +29,7 @@ function asyncHandler(cb){
 router.post("/users", asyncHandler(async (req, res, err) => {
   let user;
   try {
-    user = await user.create(req.body);
+    user = await User.create(req.body);
     res.location("/");
     res.status(201).end();
     } catch(error) {
