@@ -1,6 +1,5 @@
 'use strict';
-//users from data.json
-const { users } = require('./seed/data.json');
+
 
 //import sequelize
 const Sequelize = require('./models/index.js').sequelize;

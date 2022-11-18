@@ -1,11 +1,8 @@
 const express = require('express');
 const Courses = require('../models/Courses');
 const router = express.Router();
-const user = require('../models').User;
-const courses = require('../models').Courses;
-const auth = require('basic-auth');
-const bcrypt = require('bcrypt');
-const { authenticateUser } = require('./middleware/auth-user');
+const { User } = require('../models')
+const { authenticateUser } = require('../auth-user');
 
 
 function asyncHandler(cb){
@@ -18,35 +15,7 @@ function asyncHandler(cb){
     }
   };
   
-  exports.authenticateUser = async (req, res, next) => {
-   let message;
-    const credentials = auth(req);
-  
-    if (credentials) {
-      const user = await User.findOne({ where: { emailAdress: credentials.name} });
-      if (user) {
-        const authenticated = bcrypt
-        .compareSync(credentials.pass, user.password);
-       if (authenticated) {
-        console.log(`Authentication successful for username: ${user.emailAdress}`)
-        req.currentUser = user;
-      } else {
-        message =`Authentication failed for ${user.emailAdress}`
-      }
-    } else {
-      message = `User not found for email: ${credentials.name}`
-    } 
-     } else {
-      message = "Authorization header not found"
-    }
 
-    if (message) {
-      console.warn(message);
-      res.status(401).json({  message: 'Access Denied' })
-    } else {
-    next()
-    };
-  };
 
 //USER ROUTES
  //GET route that will return all properties and values for the currently authenticated User along with 200 status code
