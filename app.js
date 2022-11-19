@@ -1,29 +1,11 @@
 'use strict';
-
-
-//import sequelize
-const Sequelize = require('./models/index.js').sequelize;
-
-(async () => {
-  //sync the model with the database
-  await Sequelize.sync({
-  });
-  try {
-    //used authenticate() method to connect asynchronously to the database
-    await Sequelize.authenticate();
-    console.log('Connection to the database successful!');
-  } catch (error) {
-    console.error('Error connection to the database: ', error);
-  }
-})();
-
-//import router file
-const indexRouter = require('./routes/index');
-
 // load modules
 const express = require('express');
 const morgan = require('morgan');
-
+//import router file
+const indexRouter = require('./routes/index');
+//import sequelize
+const Sequelize = require('./models/index.js').sequelize;
 // variable to enable global error logging
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
@@ -42,6 +24,21 @@ app.get('/', (req, res) => {
 
 
 app.use('/api', indexRouter);
+
+(async () => {
+  //sync the model with the database
+  await Sequelize.sync({
+  });
+  try {
+    //used authenticate() method to connect asynchronously to the database
+    await Sequelize.authenticate();
+    console.log('Connection to the database successful!');
+  } catch (error) {
+    console.error('Error connection to the database: ', error);
+  }
+})();
+
+
 
 // send 404 if no other route matched
 app.use((req, res) => {
