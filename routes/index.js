@@ -1,9 +1,10 @@
 const express = require('express');
-const {Courses} = require('../models');
 const router = express.Router();
-const { User } = require('../models');
+const { User , Courses } = require('../models');
 const { authenticateUser } = require('../auth-user');
+const app = require('../app');
 
+router.use(express.json());
 
 function asyncHandler(cb){
     return async(req, res, next) => {
@@ -26,10 +27,10 @@ function asyncHandler(cb){
  } ))
 
 //POST route that will create a new user and retun a 201 HTTP status code
-router.post("/users", asyncHandler(async (req, res, err) => {
+router.post("/users", asyncHandler(async (req, res) => {
   let user;
   try {
-    user = await User.create(req.body);
+    // user = await User.create(req.body);
     res.location("/");
     res.status(201).end();
     } catch(error) {
@@ -59,9 +60,9 @@ router.post("/users", asyncHandler(async (req, res, err) => {
     res.status(200).json(courses);
   }))
 
-  //GET route that will return courses including the User associated with each course and a 200 HTTP staatus code
+  //GET route that will return courses including the User associated with each course and a 200 HTTP status code
   router.get("/courses/:id",asyncHandler(async (req, res) => {
-    const user = await Courses.findByPk(req.params.id, {
+    const course = await Courses.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -78,7 +79,8 @@ router.post("/users", asyncHandler(async (req, res, err) => {
     let course;
     try {
         course = await Courses.create(req.body);
-        res.status(201).location(`/courses/${course.id}`).end();
+        res.location("/courses/" + course.id)
+        res.status(201).end();
     } catch (error) {
       console.log('ERROR: ', error.name);
 
