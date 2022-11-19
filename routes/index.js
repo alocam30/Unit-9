@@ -1,7 +1,7 @@
 const express = require('express');
-const Courses = require('../models').Courses;
+const {Courses} = require('../models');
 const router = express.Router();
-const { User } = require('../models').User;
+const { User } = require('../models');
 const { authenticateUser } = require('../auth-user');
 
 
@@ -75,14 +75,14 @@ router.post("/users", asyncHandler(async (req, res, err) => {
 
   //POST that will create a new course 
   router.post("/courses"),authenticateUser,asyncHandler(async (req, res) => {
+    let course;
     try {
-      if (req.currentUser) {
-        const course = await Courses.create(req.body);
-        res.location("/courses/" + `${course.id}`);
-        res.status(201).end();
-      } else {
-        res.status(401).json ( {message: "You don't have access to update this course"});
-      }
+        course = await Courses.create({
+          title: req.body.title,
+          description: req.body.description,
+          userId: req.body.userId,
+        });
+        res.status(201).location(`/courses/${course.id}`).end();
     } catch (error) {
       console.log('ERROR: ', error.name);
 
