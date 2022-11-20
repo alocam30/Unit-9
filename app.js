@@ -22,7 +22,6 @@ app.get('/', (req, res) => {
   });
 });
 
-
 app.use('/api', indexRouter);
 
 (async () => {

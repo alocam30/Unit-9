@@ -30,13 +30,13 @@ function asyncHandler(cb){
 router.post("/users", asyncHandler(async (req, res) => {
   let user;
   try {
-    // user = await User.create(req.body);
+    user = await User.create(req.body);
     res.location("/");
     res.status(201).end();
     } catch(error) {
       console.log('ERROR: ', error.name);
 
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraint') {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
         const errors = error.errors.map(err => err.message);
         res.status(400).json({ errors });
       } else {
@@ -111,7 +111,7 @@ router.post("/users", asyncHandler(async (req, res) => {
     } catch (error) {
       console.log('ERROR: ', error.name);
 
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraint') {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
         const errors = error.errors.map(err => err.message);
         res.status(400).json({ errors });
       } else {
