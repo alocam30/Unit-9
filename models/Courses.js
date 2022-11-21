@@ -8,23 +8,27 @@ module.exports = (sequelize) => {
     title: {
       type: Sequelize.STRING,
       allowNull: false,
-      notNull: {
+      validate: {
+        notNull: {
         msg: "Please provide a value for Title"
+         },
+         notEmpty: {
+         msg: "Please provide a title"
+         },
        },
-    notEmpty: {
-        msg: "Please provide a title"
-        },
-  },
+},
     description: {
       type: Sequelize.TEXT,
       allowNull: false,
+      validate: {
       notNull: {
         msg: "Please provide a value for Description"
-    },
+        },
     notEmpty: {
         msg: "Please provide a description"
-    },
-    },
+        },
+      }
+  },
     estimatedTime: {
         type: Sequelize.STRING,
         
